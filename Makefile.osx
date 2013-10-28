@@ -1,0 +1,45 @@
+# Makefile for usertime on OSX
+# Glen Wiley <glen.wiley@gmail.com>
+
+CC     = gcc
+CFLAGS = 
+DEBUG  = -g
+LIBLIBS=-ldl
+
+default:
+	@echo "Makefile targets:"
+	@echo "run          build the library, test binary and run the tests"
+	@echo "tst          just build test binary"
+	@echo "libtime.dylib   shared library"
+
+run : libtime.dylib tst
+	export LD_PRELOAD=$$PWD/libtime.dylib; ./tst
+
+setusertime : setusertime.o
+	$(CC) -o $@ $?
+
+setusertime.o : setusertime.c
+	$(CC) -c $(CFLAGS) $(DEBUG) $?
+
+tst : libtime.dylib tst.o
+	$(CC) -L. -ltime -o $@ $?
+
+tst.o : tst.c
+	$(CC) -c $(CFLAGS) $(DEBUG) tst.c
+
+libtime.dylib : usertime.o
+	$(CC) -dynamiclib -o $@ $? $(LIBLIBS)
+
+usertime.o : usertime.c
+	$(CC) $(CFLAGS) $(DEBUG) -c $?
+
+dist :
+	cd ..; tar -cvf usertime/usertime.tar usertime/README usertime/Makefile usertime/usertime.c usertime/setusertime.c usertime/tst.c
+
+clean :
+	rm -f *.o core 
+
+clobber : clean
+	rm -f tst *.dylib *.so setusertime usertime.tar usertime
+
+# Makefile

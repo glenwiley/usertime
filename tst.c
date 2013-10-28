@@ -1,5 +1,7 @@
 /* tst.c
-  $Id: tst.c,v 1.2 2000/12/31 20:27:38 gwiley Exp $
+   Glen Wiley <glen.wiley@gmail.com>
+
+	usertime test executable
 */
 
 #include <stdio.h>
@@ -30,4 +32,4 @@ main(int argc, char *argv[])
 	return 0;
 } /* main */
 
-/* tst.c */
+/* end tst.c */

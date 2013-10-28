@@ -1,7 +1,6 @@
 /* usertime.c
-   $Id: usertime.c,v 1.3 2001/01/02 01:29:33 gwiley Exp $
-   Glen Wiley <gwiley@ieee.org>
-   Copyright (c)2000, Glen Wiley <gwiley@ieee.org>
+   Glen Wiley <glen.wiley@gmail.com>
+   Copyright (c)2000, Glen Wiley <glen.wiley@gmail.com>
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"), 
@@ -41,67 +40,67 @@ static const char *envvar_fn = "USERTIMEFILE";
    only used if the file is not specified in the environment */
 static const char *fn_time = "usertime";
 
-/* max length of string to read from the file - this must be able to 
-accomodate two time values plus at least 1 newline and the letter R */
+/* max length of string to read from the file */
 const int MAXREADBUF = 32;
 
 /*---------------------------------------- time 
-  reads the time (in seconds since the UNIX epoch) from tn_time
-  if fn_time is not available then we make a call to the real
+  reads the time (in seconds since the UNIX epoch) from file
+  if file is not available then we make a call to the real
   time()
 */
 time_t
 time(time_t *tloc)
 {
 	static time_t(*timefunc)(time_t *) = NULL;
+	static int    initialized = 0;
+	static time_t starttime;
+	static time_t usertime = 0;
+	static time_t firstrealtime;
 	int    fd;
 	time_t clock   = 0;
 	time_t now     = 0;
 	time_t last    = 0;
-	int    running = 0;
 	int    readok  = 0;
 	char   buf[MAXREADBUF+1];
-	char   *tok;
 	const char *fn;
 
 	if(timefunc == NULL)
 		timefunc = (time_t(*)(time_t *)) dlsym(RTLD_NEXT, "time");
 
-	fn = getenv(envvar_fn);
-	if(fn == NULL)
-		fn = fn_time;
+	// we only read the time file the first time in
 
-	fd = open(fn, O_RDONLY);
-	if(fd > -1)
+	if(initialized == 0)
 	{
-		if(read(fd, buf, MAXREADBUF) > 0)
+		fn = getenv(envvar_fn);
+		if(fn == NULL)
+			fn = fn_time;
+
+		// TODO: deal with partial read
+
+		fd = open(fn, O_RDONLY);
+		if(fd > -1)
 		{
-			readok = 1;
-			clock = strtol(buf, &tok, 10);
-
-			/* if a running time was specified then we need to calculate
-			   the running clock time and write the current time back to the 
-				file */
-			if(tok != NULL)
+			// TODO: read various formats, not just epoch seconds
+			if(read(fd, buf, MAXREADBUF) > 0)
 			{
-				tok = strchr(tok, 'R');
-				if(tok != NULL)
-				{
-					now   = timefunc(NULL);
-					last  = strtol(tok+1, NULL, 10);
-					clock = clock + difftime(now, last);
-				}
+				starttime = atol(buf);
+				usertime = 1;
 			}
-
-			if(tloc != NULL)
-				*tloc = clock;
+			close(fd);
 		}
-		close(fd);
-	} /* if(fd > -1) */
-	
-	/* if we could not get a legitimate time, then go ahead and
-	   use the system interface */
-	if(readok == 0)
+
+		firstrealtime = timefunc(NULL);
+
+		initialized = 1;
+	} // filewasread
+
+	// if we managed to get a valid usertime
+	if(usertime == 1)
+	{
+		now = timefunc(NULL);
+		clock =  starttime + difftime(now, firstrealtime);
+	}
+	else
 		clock = timefunc(tloc);
 
 	return clock;

@@ -1,7 +1,6 @@
 /* setusertime.c
-   $Id: setusertime.c,v 1.2 2001/01/02 01:29:33 gwiley Exp $
-   Glen Wiley <gwiley@ieee.org>
-   Copyright (c)2000, Glen Wiley <gwiley@ieee.org>
+   Glen Wiley <glen.wiley@gmail.com>
+   Copyright (c)2000, Glen Wiley <glen.wiley@gmail.com>
    
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"), 
@@ -31,6 +30,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <time.h>
+#include <unistd.h>
 
 /* environment variable to get the filename from */
 static const char *envvar_fn = "USERTIMEFILE";
@@ -54,7 +54,7 @@ main(int argc, char *argv[])
 	now   = time(NULL);
 	nowtm = localtime(&now);
 
-	while((opt = getopt(argc, argv, "ird:H:m:M:S:t:Y:")) != EOF)
+	while((opt = getopt(argc, argv, "?ird:H:m:M:S:t:Y:")) != EOF)
 	{
 		switch(opt)
 		{
