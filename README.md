@@ -61,8 +61,18 @@ will show you some options.  If you want to try to just get things rolling
 then make the "run" target and hopefully you will get the library, a test
 binary built and see it run.
 
+There are no external dependencies beyond a resonable C compiler and a
+reasonable implementation of make.
+
+On OSX 10.8:
+
 ```
 # make -f Makefile.osx
+```
+
+On Solaris 10 (I am not sure this still works):
+```
+# make -f Makefile.solaris
 ```
 
 #Running
