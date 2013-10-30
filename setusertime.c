@@ -44,7 +44,6 @@ main(int argc, char *argv[])
 {
 	int       opt;
 	int       retval  = 0;
-	int       running = 0;
 	int       interp  = 0;
 	char      *fn     = NULL;
 	time_t    now;
@@ -54,7 +53,7 @@ main(int argc, char *argv[])
 	now   = time(NULL);
 	nowtm = localtime(&now);
 
-	while((opt = getopt(argc, argv, "?ird:H:m:M:S:t:Y:")) != EOF)
+	while((opt = getopt(argc, argv, "?id:H:m:M:S:t:Y:")) != EOF)
 	{
 		switch(opt)
 		{
@@ -96,10 +95,6 @@ main(int argc, char *argv[])
 					fprintf(stderr, "error: minutes must be from 0 to 59\n");
 					return ERANGE;
 				}
-				break;
-
-			case 'r':
-				running = 1;
 				break;
 
 			case 'S':
@@ -155,8 +150,6 @@ main(int argc, char *argv[])
 		if(fh != NULL)
 		{
 			fprintf(fh, "%ld\n", now);
-			if(running)
-				fprintf(fh, "R%ld\n", time(NULL));
 
 			if(fn != NULL)
 				fclose(fh);
@@ -188,7 +181,6 @@ usage(const char *prg)
 	 "the system time before providing the output.\n"
 	 "\n"
 	 " -i            interperet the values in the time file\n" 
-	 " -r            the output should indicate a \"running\" clock\n"
 	 " -t <HH:MM:SS> replace the hours, minutes, seconds (seconds optional)\n"
 	 " -Y <year>     replace the year with <year> (must include century)\n"
 	 " -m <month>    replace the month with <month> (1-12)\n"
@@ -229,13 +221,6 @@ interperet(char *fn)
 		{
 			clock = strtol(buf, NULL, 10);
 			printf("clock set to %s", ctime(&clock));
-
-			p = strchr(buf, 'R');
-			if(p != NULL)
-			{
-				clock = strtol(p+1, NULL, 10);
-				printf("running since %s", ctime(&clock));
-			}
 		}
 		fclose(fh);
 	}

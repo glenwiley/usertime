@@ -14,9 +14,20 @@ The setusertime utility provides a convenient means for populating your
 usertime file.  usertime can set a static date/time or simply start the clock
 from a specified date/time and let it run.
 
+##Quickstart
+
+On FreeBSD (and linux) follow these steps to see a user program run 
+as though it is the current month/day/hour/minute/second in the year 2011:
+
+```
+# make -f Makefile.bsd setusertime
+# ./setusertime -Y2011 usertime
+# make -f Makefile.bsd run
+```
+
 ##Setting the Time
 
-The usertime clock is set by the contents of the file "usertime" in the
+The usertime clock is set by writing epoch seconds to the file "usertime" in the
 current working directory or the file specified by the environment
 variable "USERTIMEFILE".
 
@@ -37,7 +48,6 @@ and elements specified via options are used to replace portions of
 the system time before providing the output.
 
  -i            interperet the values in the time file
- -r            the output should indicate a "running" clock
  -t <HH:MM:SS> replace the hours, minutes, seconds (seconds optional)
  -Y <year>     replace the year with <year> (must include century)
  -m <month>    replace the month with <month> (1-12)
@@ -64,6 +74,12 @@ binary built and see it run.
 There are no external dependencies beyond a resonable C compiler and a
 reasonable implementation of make.
 
+On FreeBSD 9.2
+
+```
+# make -f Makefile.bsd
+```
+
 On OSX 10.8:
 
 ```
@@ -75,11 +91,11 @@ On Solaris 10 (I am not sure this still works):
 # make -f Makefile.solaris
 ```
 
-#Running
+#Running on FreeBSD or Linux
 
 ```
 gwiley-reisende:usertime gwiley$ sh
-sh-3.2$ export LD_PRELOAD=/Users/gwiley/usertime/libtime.dylib 
+sh-3.2$ export LD_PRELOAD=/Users/gwiley/usertime/libtime.so 
 sh-3.2$ date
 Mon Oct 28 13:45:10 EDT 2013
 sh-3.2$ ./setusertime -Y 2011 usertime
@@ -104,6 +120,5 @@ sh-3.2$
 * set time directly via env. variable rather than file
 * binary packages
 * man page
-* build on FreeBSD
 * build on Linux
 

@@ -1,0 +1,47 @@
+# Makefile for usertime on BSD
+# Glen Wiley <glen.wiley@gmail.com>
+#
+# this makefile has been used on FreeBSD 9.2
+
+CC      = gcc
+CFLAGS  = 
+DEBUG   = -g
+LIBLIBS =
+
+default:
+	@echo "Makefile targets:"
+	@echo "run          build the library, test binary and run the tests"
+	@echo "tst          just build test binary"
+	@echo "libtime.so   shared library"
+
+run : libtime.so tst
+	export LD_PRELOAD=$$PWD/libtime.so; ./tst
+
+setusertime : setusertime.o
+	$(CC) -o $@ $?
+
+setusertime.o : setusertime.c
+	$(CC) -c $(CFLAGS) $(DEBUG) $?
+
+tst : tst.o
+	$(CC) -L. -ltime -o $@ $?
+
+tst.o : tst.c
+	$(CC) -c $(CFLAGS) $(DEBUG) tst.c
+
+libtime.so : usertime.o
+	$(CC) -shared -o $@ $? $(LIBLIBS)
+
+usertime.o : usertime.c
+	$(CC) $(CFLAGS) -fpic $(DEBUG) -c $?
+
+dist :
+	cd ..; tar -cvf usertime/usertime.tar usertime/README.md usertime/Makefile.* usertime/usertime.c usertime/setusertime.c usertime/tst.c
+
+clean :
+	rm -f *.o core 
+
+clobber : clean
+	rm -f tst *.dylib *.so setusertime usertime.tar usertime
+
+# Makefile
