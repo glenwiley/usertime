@@ -95,10 +95,10 @@ On Solaris 10 (I am not sure this still works):
 
 ```
 gwiley-reisende:usertime gwiley$ sh
-sh-3.2$ export LD_PRELOAD=/Users/gwiley/usertime/libtime.so 
 sh-3.2$ date
 Mon Oct 28 13:45:10 EDT 2013
 sh-3.2$ ./setusertime -Y 2011 usertime
+sh-3.2$ export LD_PRELOAD=/Users/gwiley/usertime/libtime.so 
 sh-3.2$ ./tst
 time: 1319823929
 asctime: Fri Oct 28 13:45:29 2011
@@ -112,6 +112,30 @@ asctime: Fri Oct 28 13:45:31 2011
 ^C
 sh-3.2$ 
 ```
+
+#Running on OSX 10.8
+
+```
+gwiley-reisende:usertime gwiley$ sh
+sh-3.2$ date
+Mon Oct 28 13:45:10 EDT 2013
+sh-3.2$ ./setusertime -Y 2011 usertime
+sh-3.2$ export DYLD_FORCE_FLAT_NAMESPACE=1; export DYLD_INSERT_LIBRARIES=$PWD/libtime.dylib;
+sh-3.2$ ./tst
+time: 1319823929
+asctime: Fri Oct 28 13:45:29 2011
+
+time: 1319823930
+asctime: Fri Oct 28 13:45:30 2011
+
+time: 1319823931
+asctime: Fri Oct 28 13:45:31 2011
+
+^C
+sh-3.2$ 
+
+```
+
 
 #TODO
 * initialize as soon as the program runs

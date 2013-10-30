@@ -1,10 +1,10 @@
 # Makefile for usertime on OSX
 # Glen Wiley <glen.wiley@gmail.com>
 
-CC     = gcc
-CFLAGS = 
-DEBUG  = -g
-LIBLIBS=-ldl
+CC      = gcc
+CFLAGS  = 
+DEBUG   = -g
+LIBLIBS = -ldl
 
 default:
 	@echo "Makefile targets:"
@@ -13,7 +13,7 @@ default:
 	@echo "libtime.dylib   shared library"
 
 run : libtime.dylib tst
-	export LD_PRELOAD=$$PWD/libtime.dylib; ./tst
+	echo "1319986732" > usertime; export DYLD_FORCE_FLAT_NAMESPACE=1; export DYLD_INSERT_LIBRARIES=$$PWD/libtime.dylib; ./tst
 
 setusertime : setusertime.o
 	$(CC) -o $@ $?
@@ -21,20 +21,20 @@ setusertime : setusertime.o
 setusertime.o : setusertime.c
 	$(CC) -c $(CFLAGS) $(DEBUG) $?
 
-tst : libtime.dylib tst.o
-	$(CC) -L. -ltime -o $@ $?
+tst : tst.o
+	$(CC) -o $@ $?
 
 tst.o : tst.c
 	$(CC) -c $(CFLAGS) $(DEBUG) tst.c
 
 libtime.dylib : usertime.o
-	$(CC) -dynamiclib -o $@ $? $(LIBLIBS)
+	$(CC) -dynamiclib -flat_namespace -o $@ $? $(LIBLIBS)
 
 usertime.o : usertime.c
 	$(CC) $(CFLAGS) $(DEBUG) -c $?
 
 dist :
-	cd ..; tar -cvf usertime/usertime.tar usertime/README usertime/Makefile usertime/usertime.c usertime/setusertime.c usertime/tst.c
+	cd ..; tar -cvf usertime/usertime.tar usertime/README.md usertime/Makefile.* usertime/usertime.c usertime/setusertime.c usertime/tst.c
 
 clean :
 	rm -f *.o core 

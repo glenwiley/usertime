@@ -6,7 +6,7 @@
 CC      = gcc
 CFLAGS  = 
 DEBUG   = -g
-LIBLIBS =
+LIBLIBS = -ldl
 
 default:
 	@echo "Makefile targets:"
@@ -15,7 +15,7 @@ default:
 	@echo "libtime.so   shared library"
 
 run : libtime.so tst
-	export LD_PRELOAD=$$PWD/libtime.so; ./tst
+	echo "1319986732" > usertime; export LD_PRELOAD=$$PWD/libtime.so; ./tst
 
 setusertime : setusertime.o
 	$(CC) -o $@ $?

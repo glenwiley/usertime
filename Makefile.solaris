@@ -1,9 +1,9 @@
 # Makefile for usertime
 
-CC     = CC
-CFLAGS = -PIC
-DEBUG  = -g
-SHELL  = /bin/ksh
+CC      = CC
+CFLAGS  = -PIC
+DEBUG   = -g
+SHELL   = /bin/ksh
 LDFLAGS = -G
 
 run : libtime.so tst
@@ -28,7 +28,7 @@ usertime.o : usertime.c
 	$(CC) $(CFLAGS) $(DEBUG) -PIC -c $?
 
 dist :
-	cd ..; tar -cvf usertime/usertime.tar usertime/README usertime/Makefile usertime/usertime.c usertime/setusertime.c usertime/tst.c
+	cd ..; tar -cvf usertime/usertime.tar usertime/README.md usertime/Makefile.* usertime/usertime.c usertime/setusertime.c usertime/tst.c
 
 clean :
 	rm -f *.o core 
